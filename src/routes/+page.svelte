@@ -1,9 +1,9 @@
-<section class="md:flex min-h-full flex items-center justify-center">
+<section class="md:flex pt-20 flex items-center justify-center">
 	<!-- a container for the RAM calculator box (EOSIO) -->
-	<div class="max-w-xl mx-auto">
+	<div class="max-w-xl w-full px-10 mx-auto">
 		<h1 class="text-3xl font-bold mb-4">RAM Price Calculator</h1>
 
-		<section class="flex gap-4">
+		<section class="flex gap-4 md:flex-row flex-col">
 			<div class="flex-1">
 				<label for="maxRamGb" class="mr-2">Total available RAM</label>
 				<input bind:value={maxRamGb} type="number" class="w-64" />
@@ -24,9 +24,9 @@
 <!--		</div>-->
 
 		<label for="slider" class="mr-2">How much RAM is locked?</label>
-		<div class="flex items-center">
+		<div class="flex items-center md:flex-row flex-col">
 			<input bind:value={consumedRam} id="slider" type="range" min="1" max={maxRamGb} step="1" class="w-64 flex-1" on:input={changedRamConsumed} />
-			<span id="sliderValue" class="ml-2 font-semibold text-right w-[170px]">{parseFloat(consumedRam).toFixed(2)} GB ({parseFloat(consumedRam / maxRamGb * 100).toFixed(1)}%)</span>
+			<span id="sliderValue" class="ml-2 font-semibold text-lg text-right w-full md:w-[170px] mt-2 md:mt-0"><b>{parseFloat(consumedRam / maxRamGb * 100).toFixed(1)}%</b> <br class="hidden md:block" />({parseFloat(consumedRam).toFixed(2)} GB)</span>
 		</div>
 <!--		<button class="mt-2 ml-2 bg-blue-500 text-white px-4 py-2 rounded-lg" on:click={() => {-->
 <!--				if(consumedRam-1 < 1) return;-->
@@ -187,7 +187,8 @@
 
 <style>
 	.graph-container {
-		width: 600px;
+		width: 100%;
+		height: 300px;
 		padding: 20px;
 	}
 
