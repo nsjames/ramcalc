@@ -3,12 +3,12 @@
 	<div class="max-w-xl mx-auto">
 		<h1 class="text-3xl font-bold mb-4">RAM Price Calculator</h1>
 
-		<section class="flex">
+		<section class="flex gap-4">
 			<div class="flex-1">
 				<label for="maxRamGb" class="mr-2">Total available RAM</label>
 				<input bind:value={maxRamGb} type="number" class="w-64" />
 			</div>
-			<div class="flex-1">
+			<div class="flex-1 w-full">
 				<label for="tokensInContract" class="mr-2">Locked up EOS</label>
 				<input bind:value={tokensInContract} type="number" class="w-64" class:warning={lockedTokensAboveTotal} />
 			</div>
@@ -26,8 +26,7 @@
 		<label for="slider" class="mr-2">How much RAM is locked?</label>
 		<div class="flex items-center mb-10">
 			<input bind:value={consumedRam} id="slider" type="range" min="1" max={maxRamGb} step="1" class="w-64 flex-1" on:input={changedRamConsumed} />
-			<span id="sliderValue" class="ml-2 font-semibold text-right flex-1">{parseFloat(consumedRam).toFixed(2)} GB ({parseFloat(consumedRam / maxRamGb * 100).toFixed(1)}%)</span>
-
+			<span id="sliderValue" class="ml-2 font-semibold text-right w-[170px]">{parseFloat(consumedRam).toFixed(2)} GB ({parseFloat(consumedRam / maxRamGb * 100).toFixed(1)}%)</span>
 		</div>
 		<!-- Add 1 gb -->
 <!--		<button class="ml-2 bg-blue-500 text-white px-4 py-2 rounded-lg" on:click={() => {-->
@@ -196,6 +195,7 @@
 	input {
 		color: #000;
 		border-radius: 0.25rem;
+		width: 100%;
 	}
 
 	.warning {
