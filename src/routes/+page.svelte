@@ -23,7 +23,7 @@
 <!--			<span id="sliderValue" class="ml-2 font-semibold text-right flex-1">{parseFloat(maxRamGb).toFixed(2)} GB</span>-->
 <!--		</div>-->
 
-		<label for="slider" class="mr-2">How much RAM is locked?</label>
+		<label for="slider" class="mr-2">How much RAM is purchased?</label>
 		<div class="flex items-center md:flex-row flex-col">
 			<input bind:value={consumedRam} id="slider" type="range" min="1" max={maxRamGb} step="1" class="w-64 flex-1" on:input={changedRamConsumed} />
 			<span id="sliderValue" class="ml-2 font-semibold text-lg text-right w-full md:w-[170px] mt-2 md:mt-0"><b>{parseFloat(consumedRam / maxRamGb * 100).toFixed(1)}%</b> <br class="hidden md:block" />({parseFloat(consumedRam).toFixed(2)} GB)</span>
