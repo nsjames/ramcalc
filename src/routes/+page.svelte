@@ -53,7 +53,7 @@
 </section>
 
 <script lang="ts">
-	import {calculateRamPrice} from './ram';
+	import {calculateRamPrice, getPriceMap} from './ram';
 	import {onMount} from "svelte";
 	import Chart from 'chart.js/auto';
 
@@ -98,6 +98,8 @@
 			})
 		}).then(r => r.json()).then(x => x.EOS.supply.split(' ')[0]);
 		totalTokensOnNetwork = parseFloat(totalTokens);
+
+		updateChart();
 	})
 
 	let isInfinity = false;
@@ -105,14 +107,17 @@
 		return calculateRamPrice(maxRamInBytes - (consumedRamLastTick * 1024 * 1024 * 1024), tokensInContract, 1);
 	})();
 
+	const priceMap = getPriceMap(maxRamGb);
 
 	const changedRamConsumed = () => {
-		updateChart();
+		// updateChart();
 
 		let diffInGb = consumedRam - consumedRamLastTick;
 		const _price = calculateRamPrice(maxRamInBytes - (consumedRam * 1024 * 1024 * 1024), tokensInContract, diffInGb * 1024 * 1024 * 1024);
 		tokensInContract += _price;
 		consumedRamLastTick = consumedRam;
+
+		updateChart();
 
 		isInfinity = consumedRam+1 >= maxRamGb;
 	};
@@ -123,62 +128,74 @@
 		const ctx = document.getElementById('myChart').getContext('2d');
 
 		const formatNumber = x => {
-			// turn into K, or M, or B
-			if(x < 1000) return x;
-			if(x < 1000000) return `${(x / 1000).toFixed(2)}K`;
-			if(x < 1000000000) return `${(x / 1000000).toFixed(2)}M`;
+			if (x < 1000) return x;
+			if (x < 1000000) return `${(x / 1000).toFixed(2)}K`;
+			if (x < 1000000000) return `${(x / 1000000).toFixed(2)}M`;
 			return `${(x / 1000000000).toFixed(2)}B`;
 		}
 
-		if (myChart) {
-			myChart.data.datasets[1].data = [consumedRam, consumedRam];
-			myChart.data.datasets[0].data = [0, maxRamGb];
-			myChart.data.labels = ['0 GB', `${parseFloat(maxRamGb).toFixed(2)} GB`];
-			myChart.update();
-			return;
+		const closestIndex = priceMap.findIndex(x => x.cost > price);
+
+		const windowSize = 60;
+		const halfWindow = Math.floor(windowSize / 2);
+		let startIndex = closestIndex - halfWindow;
+		let endIndex = closestIndex + halfWindow + 1;
+
+		if (startIndex < 0) {
+			endIndex += Math.abs(startIndex);
+			startIndex = 0;
 		}
+		if (endIndex > priceMap.length) {
+			startIndex -= (endIndex - priceMap.length);
+			endIndex = priceMap.length;
+		}
+		startIndex = Math.max(startIndex, 0);
 
-		myChart = new Chart(ctx, {
-			type: 'line',
-			data: {
-				labels: ['0 GB', `${parseFloat(maxRamGb).toFixed(2)} GB`],
-				datasets: [
-					{
+		const slice = priceMap.slice(startIndex, endIndex);
+		const relativeIndex = closestIndex - startIndex;
+
+		const pointBackgroundColors = slice.map((x, i) => i === relativeIndex ? 'rgba(54, 162, 235, 0.2)' : 'rgba(255, 99, 132, 0.2)');
+		const pointBorderColors = slice.map((x, i) => i === relativeIndex ? 'rgba(54, 162, 235, 1)' : 'rgba(255, 99, 132, 1)');
+		const pointRadii = slice.map((x, i) => i === relativeIndex ? 7 : 5);
+		const pointStyles = slice.map((x, i) => i === relativeIndex ? 'star' : 'circle');
+
+		if (myChart) {
+			// Update existing chart
+			myChart.data.datasets[0].data = slice.map(x => x.costPerGb);
+			myChart.data.labels = slice.map(x => formatNumber(x.costPerGb));
+			myChart.data.datasets[0].pointBackgroundColor = pointBackgroundColors;
+			myChart.data.datasets[0].pointBorderColor = pointBorderColors;
+			myChart.data.datasets[0].pointRadius = pointRadii;
+			myChart.data.datasets[0].pointStyle = pointStyles;
+			myChart.update();
+		} else {
+			// Create new chart
+			const ctx = document.getElementById('myChart').getContext('2d');
+			myChart = new Chart(ctx, {
+				type: 'line',
+				data: {
+					labels: slice.map(x => formatNumber(x.costPerGb)),
+					datasets: [{
 						label: 'RAM Price',
-						data: [0, maxRamGb],
-						backgroundColor: [
-							'rgba(255, 99, 132, 0.2)',
-							'rgba(255, 99, 132, 0.2)',
-						],
-						borderColor: [
-							'rgba(255, 99, 132, 1)',
-							'rgba(255, 99, 132, 1)',
-						],
-						borderWidth: 1
-					}, {
-						label: 'Currently Consumed RAM',
-						data: [consumedRam, consumedRam],
-
-						backgroundColor: [
-							'rgba(54, 162, 235, 0.2)',
-							'rgba(54, 162, 235, 0.2)',
-						],
-						borderColor: [
-							'rgba(54, 162, 235, 1)',
-							'rgba(54, 162, 235, 1)',
-						],
-						borderWidth: 1
-					}
-				]
-			},
-			options: {
-				scales: {
-					y: {
-						beginAtZero: true
+						data: slice.map(x => x.costPerGb),
+						backgroundColor: pointBackgroundColors,
+						borderColor: pointBorderColors,
+						borderWidth: 1,
+						pointRadius: pointRadii,
+						pointStyle: pointStyles,
+						pointBackgroundColor: pointBackgroundColors,
+						pointBorderColor: pointBorderColors
+					}]
+				},
+				options: {
+					scales: {
+						y: {
+							beginAtZero: true
+						}
 					}
 				}
-			}
-		});
+			});
+		}
 	}
 
 	onMount(updateChart);

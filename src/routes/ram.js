@@ -26,7 +26,7 @@ export function getPriceMap(maxGbs) {
     rammarket.quote.balance.amount = 1000000;
 
     for(let i = 0; i <= maxGbs; i++) {
-        const cost = calculateRamPrice(1024 * 1024 * 1024);
+        const cost = calculateRamPrice(rammarket.base.balance.amount, rammarket.quote.balance.amount, 1024 * 1024 * 1024);
         rammarket.base.balance.amount -= 1024 * 1024 * 1024;
         rammarket.quote.balance.amount += cost;
 
