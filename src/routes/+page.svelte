@@ -41,11 +41,14 @@
 			changedRamConsumed();
 		}}>+1 GB</button>
 
-		<figure class="text-center text-2xl font-extrabold mb-4">
+		<figure class="mt-5 text-center text-3xl font-extrabold">
 			{isInfinity ? 'Infinity' : parseFloat(price * 1024).toFixed(4)} EOS per KB
 		</figure>
+		<figure class="mt-1 text-center text-sm mb-4">
+			({isInfinity ? 'Infinity' : parseFloat(price).toFixed(8)} EOS per byte)
+		</figure>
 
-		<div class="graph-container bg-white rounded-lg shadow-lg overflow-hidden">
+		<div class="mt-5 graph-container bg-white rounded-lg shadow-lg overflow-hidden">
 			<canvas id="myChart"></canvas>
 		</div>
 	</div>
