@@ -28,16 +28,16 @@
 			<input bind:value={consumedRam} id="slider" type="range" min="1" max={maxRamGb} step="1" class="w-64 flex-1" on:input={changedRamConsumed} />
 			<span id="sliderValue" class="ml-2 font-semibold text-right w-[170px]">{parseFloat(consumedRam).toFixed(2)} GB ({parseFloat(consumedRam / maxRamGb * 100).toFixed(1)}%)</span>
 		</div>
-		<button class="mt-2 ml-2 bg-blue-500 text-white px-4 py-2 rounded-lg" on:click={() => {
-				if(consumedRam-1 < 1) return;
-				consumedRam -= 1;
-				changedRamConsumed();
-			}}>-1 GB</button>
-		<button class="ml-2 bg-blue-500 text-white px-4 py-2 rounded-lg" on:click={() => {
-				if(consumedRam+1 > maxRamGb) return;
-				consumedRam += 1;
-				changedRamConsumed();
-			}}>+1 GB</button>
+<!--		<button class="mt-2 ml-2 bg-blue-500 text-white px-4 py-2 rounded-lg" on:click={() => {-->
+<!--				if(consumedRam-1 < 1) return;-->
+<!--				consumedRam -= 1;-->
+<!--				changedRamConsumed();-->
+<!--			}}>-1 GB</button>-->
+<!--		<button class="ml-2 bg-blue-500 text-white px-4 py-2 rounded-lg" on:click={() => {-->
+<!--				if(consumedRam+1 > maxRamGb) return;-->
+<!--				consumedRam += 1;-->
+<!--				changedRamConsumed();-->
+<!--			}}>+1 GB</button>-->
 
 		<figure class="mt-10 text-center text-3xl font-extrabold">
 			{isInfinity ? 'Infinity' : parseFloat(price * 1024).toFixed(4)} EOS per KB
