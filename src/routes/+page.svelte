@@ -10,7 +10,7 @@
 			</div>
 			<div class="flex-1">
 				<label for="tokensInContract" class="mr-2">Locked up EOS</label>
-				<input bind:value={tokensInContract} type="number" class="w-64" />
+				<input bind:value={tokensInContract} type="number" class="w-64" class:warning={lockedTokensAboveTotal} />
 			</div>
 		</section>
 
@@ -68,6 +68,8 @@
 	let consumedRam = consumedRamLastTick;
 	$: outstandingSupply = maxRamInBytes - (consumedRam * 1024 * 1024 * 1024);
 
+	let totalTokensOnNetwork = 1183040642.5363;
+	$: lockedTokensAboveTotal = tokensInContract > totalTokensOnNetwork;
 
 	onMount(async () => {
 		const market = await fetch('https://eos.api.eosnation.io/v1/chain/get_table_rows', {
@@ -86,6 +88,18 @@
 		tokensInContract = parseFloat(market.quote.balance.split(' ')[0]);
 		consumedRam = (maxRamInBytes - parseInt(market.base.balance.split(' ')[0])) / 1024 / 1024 / 1024;
 		consumedRamLastTick = consumedRam;
+
+		const totalTokens = await fetch('https://eos.api.eosnation.io/v1/chain/get_currency_stats', {
+			method: 'POST',
+			headers: {
+				'Content-Type': 'application/json'
+			},
+			body: JSON.stringify({
+				"code": "eosio.token",
+				"symbol": "EOS"
+			})
+		}).then(r => r.json()).then(x => x.EOS.supply.split(' ')[0]);
+		totalTokensOnNetwork = parseFloat(totalTokens);
 	})
 
 	let isInfinity = false;
@@ -182,5 +196,10 @@
 	input {
 		color: #000;
 		border-radius: 0.25rem;
+	}
+
+	.warning {
+		background: red;
+		color: white;
 	}
 </style>
