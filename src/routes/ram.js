@@ -1,5 +1,3 @@
-import Decimal from 'decimal.js';
-
 const rammarket = {
     base: {
         balance: {
