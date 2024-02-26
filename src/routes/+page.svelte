@@ -182,7 +182,7 @@
 				data: {
 					labels: slice.map(x => formatNumber(x.costPerGb)),
 					datasets: [{
-						label: 'RAM Price',
+						label: 'RAM Price per GB',
 						data: slice.map(x => x.costPerGb),
 						backgroundColor: pointBackgroundColors,
 						borderColor: pointBorderColors,
