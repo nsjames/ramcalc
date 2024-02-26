@@ -136,7 +136,7 @@
 
 		const closestIndex = priceMap.findIndex(x => x.cost > price);
 
-		const windowSize = 60;
+		const windowSize = 40;
 		const halfWindow = Math.floor(windowSize / 2);
 		let startIndex = closestIndex - halfWindow;
 		let endIndex = closestIndex + halfWindow + 1;
@@ -167,6 +167,12 @@
 			myChart.data.datasets[0].pointBorderColor = pointBorderColors;
 			myChart.data.datasets[0].pointRadius = pointRadii;
 			myChart.data.datasets[0].pointStyle = pointStyles;
+
+			// make all others no point
+			myChart.data.datasets[0].pointRadius = slice.map((x, i) => i === relativeIndex ? 7 : 0);
+			myChart.data.datasets[0].pointStyle = slice.map((x, i) => i === relativeIndex ? 'star' : 'circle');
+
+
 			myChart.update();
 		} else {
 			// Create new chart
