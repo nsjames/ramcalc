@@ -16,19 +16,7 @@ const rammarket = {
 }
 
 export function calculateRamPrice(base, quote, bytes) {
-    // const connectorWeight = rammarket.quote.weight;
-    //
-    // return (quote / (connectorWeight * base)) * bytes;
-
-    const baseBalance = new Decimal(base);
-    const quoteBalance = new Decimal(quote);
-    const amount = new Decimal(parseFloat(bytes));
-
-    const R = baseBalance.minus(amount);
-    const C = quoteBalance;
-    const F = 1.0;
-
-    return Number(C.times(Decimal.pow(amount.div(R).plus(1.0), F).minus(1.0)).toString());
+    return (quote / base) * bytes;
 }
 
 export function getPriceMap(maxGbs) {

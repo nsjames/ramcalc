@@ -31,6 +31,12 @@
 		</div>
 		<!-- Add 1 gb -->
 		<button class="ml-2 bg-blue-500 text-white px-4 py-2 rounded-lg" on:click={() => {
+			if(consumedRam-1 < 1) return;
+			consumedRam -= 1;
+			changedRamConsumed();
+		}}>-1 GB</button>
+		<button class="ml-2 bg-blue-500 text-white px-4 py-2 rounded-lg" on:click={() => {
+			if(consumedRam+1 > maxRamGb) return;
 			consumedRam += 1;
 			changedRamConsumed();
 		}}>+1 GB</button>
@@ -59,6 +65,7 @@
 	let consumedRam = consumedRamLastTick;
 	$: outstandingSupply = maxRamInBytes - (consumedRam * 1024 * 1024 * 1024);
 
+
 	onMount(async () => {
 		const market = await fetch('https://eos.api.eosnation.io/v1/chain/get_table_rows', {
 			method: 'POST',
@@ -74,25 +81,22 @@
 			})
 		}).then(r => r.json()).then(x => x.rows[0])
 		tokensInContract = parseFloat(market.quote.balance.split(' ')[0]);
-		outstandingSupply = parseInt(market.base.balance.split(' ')[0]) ;
+		consumedRam = (maxRamInBytes - parseInt(market.base.balance.split(' ')[0])) / 1024 / 1024 / 1024;
+		consumedRamLastTick = consumedRam;
 	})
 
 	let isInfinity = false;
 	$: price = (() => {
-		return tokensInContract / (outstandingSupply);
+		return calculateRamPrice(maxRamInBytes - (consumedRamLastTick * 1024 * 1024 * 1024), tokensInContract, 1);
 	})();
 
 
 	const changedRamConsumed = () => {
 		updateChart();
 
-
-		const diffInGb = consumedRam - consumedRamLastTick;
-		console.log('diffInGb', diffInGb);
-		const newPrice = calculateRamPrice(consumedRam, tokensInContract, diffInGb);
-		console.log('newPrice', newPrice);
-		const tokens = diffInGb * 1024 * 1024 * 1024 * price;
-		tokensInContract += tokens || 0;
+		let diffInGb = consumedRam - consumedRamLastTick;
+		const _price = calculateRamPrice(maxRamInBytes - (consumedRam * 1024 * 1024 * 1024), tokensInContract, diffInGb * 1024 * 1024 * 1024);
+		tokensInContract += _price;
 		consumedRamLastTick = consumedRam;
 
 		isInfinity = consumedRam+1 >= maxRamGb;
