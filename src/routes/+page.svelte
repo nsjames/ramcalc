@@ -6,7 +6,7 @@
 		<section class="flex gap-4 md:flex-row flex-col">
 			<div class="flex-1">
 				<label for="maxRamGb" class="mr-2">Total available RAM</label>
-				<input bind:value={maxRamGb} type="number" class="w-64" />
+				<input disabled bind:value={maxRamGb} type="number" class="w-64" />
 			</div>
 			<div class="flex-1 w-full">
 				<label for="tokensInContract" class="mr-2">Locked up EOS</label>
