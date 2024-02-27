@@ -10,7 +10,7 @@
 			</div>
 			<div class="flex-1 w-full">
 				<label for="tokensInContract" class="mr-2">Locked up EOS</label>
-				<input bind:value={tokensInContract} type="number" class="w-64" class:warning={lockedTokensAboveTotal} />
+				<input disabled bind:value={tokensInContract} type="number" class="w-64" class:warning={lockedTokensAboveTotal} />
 			</div>
 		</section>
 
